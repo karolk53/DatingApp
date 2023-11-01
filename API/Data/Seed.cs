@@ -4,7 +4,6 @@ using System.Text;
 using System.Text.Json;
 using API.Entities;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
 
 namespace API.Data
 {
