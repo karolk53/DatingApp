@@ -14,7 +14,7 @@ namespace API.DTOs
 
         public DateTime Created { get; set; }
 
-        public DateTime LastActice { get; set; }
+        public DateTime LastActive { get; set; }
 
         public string Gender { get; set; }
 
