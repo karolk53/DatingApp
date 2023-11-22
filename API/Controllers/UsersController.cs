@@ -26,7 +26,7 @@ public class UsersController : BaseApiController
             this._userRepository = userRepository;
     }
 
-    [Authorize(Roles = "Admin")]
+    [Authorize]
     [HttpGet]
     public async Task<ActionResult<PagedList<MemberDto>>> GetUsers([FromQuery]UserParams userParams)
     {
@@ -44,7 +44,7 @@ public class UsersController : BaseApiController
 
     }
 
-    [Authorize(Roles = "Member")]
+    [Authorize]
     [HttpGet("{username}")]
     public async Task<ActionResult<MemberDto>> GetUser(string username)
     {
