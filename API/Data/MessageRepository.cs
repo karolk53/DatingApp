@@ -71,37 +71,32 @@ namespace API.Data
 
         public async Task<IEnumerable<MessageDto>> GetMessageThread(string currentUserName, string recipientUserName)
         {
-            var messages = await _context.Messages
-                .Include(u => u.Sender).ThenInclude(p => p.Photos) //"theninclude" because the photos are related to the user
-                .Include(u => u.Recipient).ThenInclude(p => p.Photos)
-                .Where(m => m.RecipientUsername == currentUserName && m.RecipientDeleted == false && m.SenderUserName == recipientUserName || m.RecipientUsername == recipientUserName && m.SenderDeleted == false && m.SenderUserName == currentUserName )
+            var query = _context.Messages
+                .Where(
+                    m => m.RecipientUsername == currentUserName && 
+                    m.RecipientDeleted == false && 
+                    m.SenderUserName == recipientUserName || m.RecipientUsername == recipientUserName 
+                    && m.SenderDeleted == false 
+                    && m.SenderUserName == currentUserName 
+                )
                 .OrderBy(m => m.MessageSent)
-                .ToListAsync();
+                .AsQueryable();
             
-            var unreadMessages = messages.Where(m => m.DateRead == null && m.RecipientUsername == currentUserName).ToList();
+            var unreadMessages = query.Where(m => m.DateRead == null && m.RecipientUsername == currentUserName).ToList();
             if(unreadMessages.Any())
             {
                 foreach(var message in unreadMessages)
                 {
                     message.DateRead = DateTime.UtcNow;
                 }
-
-                await _context.SaveChangesAsync();
-
             }
 
-            return _mapper.Map<IEnumerable<MessageDto>>(messages);
-
+            return await query.ProjectTo<MessageDto>(_mapper.ConfigurationProvider).ToListAsync();
         }
 
         public void RemoveConncetion(Connection connection)
         {
             _context.Connections.Remove(connection);
-        }
-
-        public async Task<bool> SaveAllAsync()
-        {
-            return await _context.SaveChangesAsync() > 0;
         }
 
         public async Task<Group> GetGroupForConnection(string connectionId)
