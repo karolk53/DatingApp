@@ -1,0 +1,28 @@
+# fly.toml app configuration file generated for kk-datingapp on 2023-12-19T18:56:19+01:00
+#
+# See https://fly.io/docs/reference/configuration/ for information about how to use this file.
+#
+
+app = "kk-datingapp"
+primary_region = "waw"
+
+[build]
+  image = "karolk14/datingapp:latest"
+
+[env]
+  ASPNETCORE_URLS="http://+:8080"
+  CloudinarySettings__CloudName="dwswcgycs"
+  CloudinarySettings__ApiKey="862773215778799"
+
+[http_service]
+  internal_port = 8080
+  force_https = true
+  auto_stop_machines = true
+  auto_start_machines = true
+  min_machines_running = 0
+  processes = ["app"]
+
+[[vm]]
+  cpu_kind = "shared"
+  cpus = 1
+  memory_mb = 1024
